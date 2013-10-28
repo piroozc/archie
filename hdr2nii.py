@@ -14,7 +14,7 @@ def parse_args(argv):
   try:
     opts, args = getopt.getopt(argv,"hi:o:",["idir=","odir="])
   except getopt.GetoptError:
-    print 'test.py -i <input_dir> -o <output_dir>'
+    print 'hdr2nii.py -i <input_dir> -o <output_dir>'
     sys.exit(2)
   for opt, arg in opts:
     if opt == '-h':
@@ -74,6 +74,6 @@ workflow.add_nodes([changeDT, deleteOrient, swapDim, setqfc])
 
 workflow.connect(changeDT, 'out_file', deleteOrient, 'in_file_name')
 workflow.connect(changeDT, 'out_file', swapDim, 'in_file')
-workflow.connect(changeDT, 'out_file', setqfc, 'in_file_name')
+workflow.connect(swapDim, 'out_file', setqfc, 'in_file_name')
 
-workflow.run()
+workflow.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
