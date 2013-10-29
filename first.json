@@ -1,8 +1,9 @@
 {
     "name": "first_run_all",
     "base_dir": ".",
-    "nodes": {
-        "first": {
+    "nodes": [
+        {
+            "name": "first",
             "interface": "fsl.FIRST()",
             "base_dir": ".",
             "inputs.terminal_output": "none",
@@ -12,5 +13,5 @@
                 "filetypes": "*.nii.gz"
             }
         }
-    }
+    ]
 }
