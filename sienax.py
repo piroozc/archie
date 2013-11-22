@@ -28,14 +28,25 @@ def parse_args(argv):
 parse_args(sys.argv[1:])
 
 #function to interface with sienax command
-def sienax(in_file_name, options):
-  import subprocess
+def sienax(in_file_name):
+  import subprocess, os
   command = ["sienax"]
-  for o in options:
-    command.append(o)
-    if o == '-o':
-      output_
   command.append(in_file_name)
   subprocess.call(command)
-  return in_file_name
+  return os.path.abspath(in_file_name)
 
+sienax_interface = Function(input_names=["in_file_name"],
+                               output_names=["out_file_name"],
+                               function=sienax)
+
+#delete the orientation of .nii image
+sienax_node  = pe.Node(interface=sienax_interface, name='sienax')
+sienax_node.base_dir = input_dir
+sienax_node.iterables = ("in_file_name", [f for f in glob.glob(input_dir + '*.nii.gz')])
+
+#create the workflow, add nodes, connect them and run the workflow
+workflow = pe.Workflow(name='sienax_run_all')
+workflow.base_dir = output_dir
+workflow.add_nodes([sienax_node])
+
+workflow.run(plugin='MultiProc', plugin_args={'n_procs' : 2})
