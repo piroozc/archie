@@ -39,14 +39,14 @@ changeDT.inputs.output_datatype = 'input'
 changeDT.inputs.terminal_output = 'none'
 
 #function to interface with fslorient command
-def fslorient(in_file_name, main_options):
-  import subprocess
-  command = ["fslorient"]
-  for option in main_options:
-    command.append(option)
-  command.append(in_file_name)
-  subprocess.call(command)
-  return in_file_name
+fslorient = 'def fslorient(in_file_name, main_options):\n' + \
+'  import subprocess, os\n' + \
+'  command = ["fslorient"]\n' + \
+'  for option in main_options:\n' + \
+'    command.append(option)\n' + \
+'  command.append(in_file_name)\n' + \
+'  subprocess.call(command)\n' + \
+'  return os.path.abspath(in_file_name)'
 
 
 fslorient_interface = Function(input_names=["in_file_name", "main_options"],
@@ -72,8 +72,10 @@ workflow = pe.Workflow(name='hdr2nii')
 workflow.base_dir = output_dir
 workflow.add_nodes([changeDT, deleteOrient, swapDim, setqfc])
 
+print changeDT.__class__.__name__, 'out_file'.__class__.__name__, deleteOrient.__class__.__name__, 'in_file_name'
 workflow.connect(changeDT, 'out_file', deleteOrient, 'in_file_name')
 workflow.connect(changeDT, 'out_file', swapDim, 'in_file')
 workflow.connect(swapDim, 'out_file', setqfc, 'in_file_name')
 
 workflow.run(plugin='MultiProc', plugin_args={'n_procs' : 4})
+

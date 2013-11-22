@@ -1,16 +1,18 @@
 {
-    "name": "first_run_all",
+    "name": "first_run_all_json",
     "base_dir": ".",
     "nodes": [
         {
             "name": "first",
-            "interface": "fsl.FIRST()",
-            "base_dir": ".",
-            "inputs.terminal_output": "none",
-            "in_file": {
-                "type": "iterable",
-                "address": "/home/pchubak/career/archie/data/nii/",
-                "filetypes": "*.nii.gz"
+            "interface": "interfaces.fsl.FIRST",
+						"params": {
+                "base_dir": ".",
+                "inputs.terminal_output": "none",
+                "iterables": {
+                    "name": "in_file",
+                    "path": "/home/pchubak/career/archie/data/nii/",
+                    "files": "*.nii.gz"
+                }
             }
         }
     ]
