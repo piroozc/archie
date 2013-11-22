@@ -1,0 +1,64 @@
+{
+    "name": "hdr2nii_json",
+    "base_dir": ".",
+    "nodes": [
+        {
+            "name": "changeDT",
+            "interface": "interfaces.fsl.ChangeDataType",
+						"params": {
+                "base_dir": "/home/pchubak/career/archie/data/imghdr/",
+                "inputs.terminal_output": "none",
+                "inputs.output_type": "NIFTI_GZ",
+                "inputs.output_datatype": "input",
+                "iterables": {
+                    "name": "in_file",
+                    "path": "/home/pchubak/career/archie/data/imghdr/",
+                    "files": "*.hdr"
+                }
+            }
+        },
+        {
+            "name": "deleteOrient",
+            "interface": "fslorient_interface",
+						"params": {
+                "base_dir": "/home/pchubak/career/archie/data/imghdr/",
+                "inputs.main_options": "-deleteorient"
+            }
+        },
+        {
+            "name": "swapDim",
+            "interface": "interfaces.fsl.SwapDimensions",
+						"params": {
+                "inputs.new_dims": ["x", "y", "z"],
+                "inputs.terminal_output": "file"
+            }
+        },
+        {
+            "name": "setqfc",
+            "interface": "fslorient_interface",
+						"params": {
+                "inputs.main_options": ["-setqformcode", "1"]
+            }
+        }
+    ],
+    "connections": [
+        {
+            "source": "changeDT",
+            "output": "out_file",
+            "target": "deleteOrient",
+            "input":  "in_file_name"
+        },
+        {
+            "source": "changeDT",
+            "output": "out_file",
+            "target": "swapDim",
+            "input":  "in_file"
+        },
+        {
+            "source": "swapDim",
+            "output": "out_file",
+            "target": "setqfc",
+            "input":  "in_file_name"
+        }
+    ]
+}
